@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat History</title>
+</head>
+<body>
+    <h1>Chat History</h1>
+    <p>Logged in as: {{ session['username'] }}</p>
+    
+    <h2>Your Chat History</h2>
+    <ul>
+        {% for entry in chat_history %}
+            <li>
+                <strong>User:</strong> {{ entry.user_message }}<br>
+                <strong>Bot:</strong> {{ entry.bot_response }}<br>
+                {% if entry.admin_reply %}
+                    <strong>Admin:</strong> {{ entry.admin_reply }}<br>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

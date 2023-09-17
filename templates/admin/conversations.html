@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Admin Panel - Conversations</title>
+    <style>
+        /* Use CSS flexbox for layout */
+        .container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        .side-pane {
+            flex: 0 0 15%;
+            padding: 10px;
+            border-right: 1px solid #ccc;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-pane {
+            flex: 1;
+            padding: 10px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chatbot Admin Panel - Conversations</h1>
+
+    <!-- Container for flex layout -->
+    <div class="container">
+        <!-- Side pane with list of users -->
+        <div class="side-pane">
+            <h2>Users</h2>
+            <ul>
+                {% for username in usernames %}
+                    <li><a href="/admin/conversations/{{ username }}">{{ username }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Main pane to display conversations -->
+        <div class="main-pane">
+            <h2>Conversations</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Timestamp</th>
+                        <th>Username</th>
+                        <th>User Message</th>
+                        <th>Bot Response</th>
+                        <th>Admin Reply</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for conversation in conversations %}
+                        <tr>
+                            <td>{{ conversation.id }}</td>
+                            <td>{{ conversation.timestamp }}</td>
+                            <td>{{ conversation.username }}</td>
+                            <td>{{ conversation.user_message }}</td>
+                            <td>{{ conversation.bot_response }}</td>
+                            <td>{{ conversation.admin_reply }}</td>
+                            <td>
+                                <form method="POST" action="/admin/reply/{{ conversation.id }}">
+                                    <textarea name="admin_reply" rows="2" cols="30"></textarea>
+                                    <button type="submit">Send</button>
+                                </form>
+                            </td>
+                            
+                            <td>
+                                <button class="toggle-reply">Toggle Reply</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleButtons = document.querySelectorAll('.toggle-reply');
+    
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const adminReplyTextarea = this.parentElement.parentElement.querySelector('textarea[name="admin_reply"]');
+                    adminReplyTextarea.disabled = !adminReplyTextarea.disabled;
+                    if (adminReplyTextarea.disabled) {
+                        sendButton.style.display = 'none';
+                    } else {
+                        sendButton.style.display = 'inline-block';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

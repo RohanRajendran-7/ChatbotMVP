@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+</head>
+<body>
+    <h1>Chatbot</h1>
+    <!-- Display the logged-in user's username -->
+    {% if 'username' in session %}
+        <p>Logged in as: {{ session['username'] }}</p>
+    {% endif %}
+    
+    <!-- Button to view chat history -->
+    <button id="view-history-btn">View Chat History</button>
+    
+    <div id="chatbox">
+        <!-- Chat messages will be displayed here -->
+
+    </div>
+    <form id="user-form">
+        <input type="text" id="user-message" placeholder="Type a message...">
+        <button type="submit">Send</button>
+    </form>
+    <script>
+        // JavaScript code for handling user interactions and displaying chat messages
+        const chatbox = document.getElementById('chatbox');
+        const userForm = document.getElementById('user-form');
+        const userMessageInput = document.getElementById('user-message');
+
+        userForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const userMessage = userMessageInput.value.trim();
+
+            // Display user's message in the chatbox
+            chatbox.innerHTML += `<div><strong>You:</strong> ${userMessage}</div>`;
+
+            // Send the user's message to the server and receive a response
+            fetch('/chat', {
+                method: 'POST',
+                body: new URLSearchParams({ user_message: userMessage }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(response => response.text())
+                .then(botResponse => {
+                    // Display the bot's response in the chatbox
+                    chatbox.innerHTML += `<div><strong>Bot:</strong> ${botResponse}</div>`;
+                    userMessageInput.value = ''; // Clear the input field
+                });
+        });
+        const viewHistoryButton = document.getElementById('view-history-btn');
+        viewHistoryButton.addEventListener('click', function () {
+            // Use AJAX to load chat history
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/chat_history', true);
+            
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // Insert chat history into the chatbox
+                    chatbox.innerHTML = xhr.responseText;
+                } else {
+                    console.error('Failed to load chat history.');
+                }
+            };
+            
+            xhr.send();
+        });
+    </script>
+</body>
+</html>

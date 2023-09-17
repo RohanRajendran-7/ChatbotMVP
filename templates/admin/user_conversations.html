@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - User Conversations</title>
+</head>
+<body>
+    <h1>Admin Panel - User Conversations</h1>
+    
+    <div class="side-pane">
+        <h2>Users</h2>
+        <ul>
+            {% for user in usernames %}
+                <li><a href="/admin/conversations/{{ user }}">{{ user }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="main-pane">
+        <h2>Conversations for {{ username }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Timestamp</th>
+                    <th>User Message</th>
+                    <th>Bot Response</th>
+                    <th>Admin Reply</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conversation in conversations %}
+                    <tr>
+                        <td>{{ conversation.id }}</td>
+                        <td>{{ conversation.timestamp }}</td>
+                        <td>{{ conversation.user_message }}</td>
+                        <td>{{ conversation.bot_response }}</td>
+                        <td>{{ conversation.admin_reply }}</td>
+                        <td>
+                            <form method="POST" action="/admin/reply/{{ conversation.id }}">
+                                <textarea name="admin_reply" rows="2" cols="30"></textarea>
+                                <button type="submit">Send</button>
+                            </form>
+                        </td>
+                        
+                        <td>
+                            <button class="toggle-reply">Toggle Reply</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleButtons = document.querySelectorAll('.toggle-reply');
+    
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const adminReplyTextarea = this.parentElement.parentElement.querySelector('textarea[name="admin_reply"]');
+                    adminReplyTextarea.disabled = !adminReplyTextarea.disabled;
+                    if (adminReplyTextarea.disabled) {
+                        sendButton.style.display = 'none';
+                    } else {
+                        sendButton.style.display = 'inline-block';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
